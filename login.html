@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Habit Tracker Login</h1>
+
+<div class="login-box">
+    <input id="usernameInput" placeholder="Enter username">
+    <br><br>
+    <button id="loginBtn">Login</button>
+</div>
+
+<script>
+document.getElementById("loginBtn").onclick = () => {
+    const user = usernameInput.value.trim();
+    if (!user) return alert("Enter username");
+    localStorage.setItem("currentUser", user);
+    window.location.href = "select.html";
+};
+</script>
+
+</body>
+</html>

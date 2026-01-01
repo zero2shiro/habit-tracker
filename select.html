@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Trackers</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<script>
+/* ---------- AUTH CHECK + GLOBAL USER ---------- */
+const user = localStorage.getItem("currentUser");
+if (!user) location.href = "login.html";
+</script>
+
+<h1>Your Trackers</h1>
+
+<div class="add-habit">
+    <input id="newTrackerInput" placeholder="New tracker name">
+    <button id="addTrackerBtn">Add Tracker</button>
+</div>
+
+<div id="trackerList" class="habit-list"></div>
+
+<script>
+/* ---------- TRACKER LOGIC ---------- */
+
+const list = document.getElementById("trackerList");
+const newTrackerInput = document.getElementById("newTrackerInput");
+const addTrackerBtn = document.getElementById("addTrackerBtn");
+
+let habits =
+    JSON.parse(localStorage.getItem(`habits_${user}`)) || [];
+
+function save() {
+    localStorage.setItem(`habits_${user}`, JSON.stringify(habits));
+}
+
+function render() {
+    list.innerHTML = "";
+
+    if (habits.length === 0) {
+        list.innerHTML = "<p>No trackers yet.</p>";
+        return;
+    }
+
+    habits.forEach((h, i) => {
+        const row = document.createElement("div");
+        row.className = "habit-item";
+
+        const name = document.createElement("span");
+        name.innerText = h.name;
+        name.style.cursor = "pointer";
+        name.onclick = () => {
+            localStorage.setItem("selectedHabitIndex", i);
+            location.href = "index.html";
+        };
+
+        const del = document.createElement("button");
+        del.innerText = "Delete";
+        del.onclick = () => {
+            if (confirm(`Delete "${h.name}"?`)) {
+                habits.splice(i, 1);
+                save();
+                render();
+            }
+        };
+
+        row.append(name, del);
+        list.append(row);
+    });
+}
+
+addTrackerBtn.onclick = () => {
+    const name = newTrackerInput.value.trim();
+    if (!name) return;
+
+    habits.push({
+        name,
+        data: [
+            Array(31).fill(false), Array(28).fill(false),
+            Array(31).fill(false), Array(30).fill(false),
+            Array(31).fill(false), Array(30).fill(false),
+            Array(31).fill(false), Array(31).fill(false),
+            Array(30).fill(false), Array(31).fill(false),
+            Array(30).fill(false), Array(31).fill(false)
+        ]
+    });
+
+    newTrackerInput.value = "";
+    save();
+    render();
+};
+
+render();
+</script>
+
+</body>
+</html>

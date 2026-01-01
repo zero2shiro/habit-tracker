@@ -11,7 +11,7 @@ const habit = habits[idx];
 document.getElementById("trackerTitle").innerText = habit.name;
 
 document.getElementById("logoutBtn").onclick = () => {
-    localStorage.clear();
+    localStorage.removeItem("currentUser");
     location.href = "login.html";
 };
 
@@ -23,31 +23,36 @@ const months = [
 
 const container = document.getElementById("trackerContainer");
 
-function save() {
+function saveHabits() {
     localStorage.setItem(`habits_${user}`, JSON.stringify(habits));
 }
 
 months.forEach((m, mi) => {
     const div = document.createElement("div");
     div.innerHTML = `<h3>${m[0]}</h3>`;
+
     const days = document.createElement("div");
     days.className = "days";
 
-    habit.data[mi].forEach((v, di) => {
+    habit.data[mi].forEach((value, di) => {
         const d = document.createElement("div");
         d.className = "day";
 
         const label = document.createElement("label");
-        label.innerHTML = `
-            <input type="checkbox" ${v ? "checked" : ""}>
-            <span>${di+1}</span>
-        `;
 
-        label.onclick = () => {
-            habit.data[mi][di] = !habit.data[mi][di];
-            save();
-        };
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = value;
 
+        checkbox.addEventListener("change", () => {
+            habit.data[mi][di] = checkbox.checked;
+            saveHabits();
+        });
+
+        const span = document.createElement("span");
+        span.innerText = di + 1;
+
+        label.append(checkbox, span);
         d.append(label);
         days.append(d);
     });
